@@ -1,45 +1,40 @@
-いつの間にか知らない機能が追加されていたり書き方が変わっているthreejsをキャッチアップする目的で、主にexamplesの更新分についてAIの力を借りた要約＆不明点を調べながら各詳細を記録していく。
-## Overview（概要）
+いつの間にか知らない機能が追加されていたり書き方が変わっているthreejsをキャッチアップする目的で、主にexamplesの更新分についてAIの力を借りた要約＆不明な用語・判断を調べながら各詳細を記録していく。
+## Overview
 リリース日: ### 2026/02/19
 公式リリースノート: [Release r183 · mrdoob/three.js · GitHub](https://github.com/mrdoob/three.js/releases/tag/r183)
 Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://github.com/mrdoob/three.js/wiki/Migration-Guide#182--183)
 
 ## New Featured Example Note
+### Update List
+#### 1
 > Improved Sky and Water shaders 
 > [https://threejs.org/examples/#webgl_shaders_ocean](https://t.co/SnmmjUo8El) 
 
 海のデモを「静的な水面＋空」から「HDR＋ブルーム＋雲制御＋時間変化を持つ、より映画的なシーン」へ拡張
 - **描画品質/HDRパイプラインの強化**
     - `WebGLRenderer` が `outputBufferType: THREE.HalfFloatType` になり、明るさ情報の表現力が向上。
-    - `UnrealBloomPass` を導入して、ハイライトの発光表現（ブルーム）を追加。
-    - `renderer.setEffects( [ bloomPass ] )` によりポストプロセス適用が明示化。
-> [!note] ** 何故HalfFloatTypeか **
-> HDRレンダリングの条件（1.0以上の値、諧調がなめらか、メモリ消費抑制）をバランスよく満たす
-
-|**フォーマット**|**HDR対応**|**メモリ負荷**|**特徴**|
-|---|---|---|---|
-|**UnsignedByteType**|×|低|一般的な画像用。1.0以上は切り捨てられる。|
-|**HalfFloatType**|**○**|**中**|**HDRの標準。十分な階調と現実的な負荷。**|
-|**FloatType**|○|高|物理シミュレーション等、超高精度が必要な場合用。|
+	    - [[#何故HalfFloatTypeか]]
+    - `UnrealBloomPass` を導入
 - **露出（Exposure）の調整性向上**
-    - 初期 `toneMappingExposure` を `0.5 -> 0.1` に変更し、白飛びしにくい初期値へ。
-    - GUIに `exposure` スライダー追加（リアルタイム調整可能）。
-- **空表現の拡張（雲パラメータ）、空のアニメーション追加**
+    - `toneMappingExposure` を `0.5 -> 0.1` に変更し、白飛びしにくい初期値へ。
+    - GUIに `exposure` スライダー追加。
+- **空表現の拡張**
     - `Sky` の uniform に `cloudCoverage / cloudDensity / cloudElevation` を追加。
-    - 毎フレーム `sky.material.uniforms['time'].value = time;` を更新。空（雲）の時間変化表現に対応。
+    - 毎フレーム `sky.material.uniforms['time'].value = time;` で更新。空（雲）の時間変化表現に対応。
 
 ---
 
+#### 2
 > Volumetric Lighting using TRAA 
 > [https://threejs.org/examples/#webgpu_volume_lighting_traa](https://t.co/sKEPxqG2ux) 
 
-このデモ は、**ボリューメトリック照明 + 時間的AA(TRAA)** を組み合わせた構成です。要点は次です。
+**ボリューメトリック照明 + TRAA** を組み合わせたデモ。
 - ボリューム本体は createTexture3Dで生成した `Data3DTexture` を使い、`VolumeNodeMaterial` の `scatteringNode` で密度をサンプリング。
 - 描画は `RenderPipeline` で分離し、
     1. `depthPass`（不透明物の深度）
     2. pass + mrt(output, velocity（カラー+モーションベクトル）
-    3. traa（時間的再投影AA）  
-        の順で合成。
+    3. traa
+の順で合成。
 - 時間方向の安定化として、halton 由来の32サンプルオフセットを毎フレーム更新し、TRAAの蓄積と整合させています（`_haltonOffsets`）。
 
 **r183更新との関係（このデモ内で実際に使っている新規要素）**
@@ -48,8 +43,6 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 
 - TRAAノード利用: traa / ドキュメント TRAANode
 - ノードベースのポスト処理パイプライン利用: webgpu_volume_lighting_traa.html内の `RenderPipeline` + pass/depthPass/mrt/velocity
-
-比較元の通常版は webgpu_volume_lighting.htmlで、`_traa` 版はそこに時間的再投影と専用パイプライン設計を追加した位置づけです。
 
 ---
 
@@ -420,3 +413,13 @@ normalNode + normalMap() + uniform() を使う形は、r183で進んだWebGPU/TS
     - Config.js, Sidebar.Project.Renderer.js
 
 ---
+
+### Key Terms & Decisions
+#### 何故HalfFloatTypeか
+HDRレンダリングの条件（1.0以上の値、諧調がなめらか、メモリ消費抑制）をバランスよく満たす
+
+| **フォーマット**           | **HDR対応** | **メモリ負荷** | **特徴**                   |
+| -------------------- | --------- | --------- | ------------------------ |
+| **UnsignedByteType** | ×         | 低         | 一般的な画像用。1.0以上は切り捨てられる。   |
+| **HalfFloatType**    | **○**     | **中**     | **HDRの標準。十分な階調と現実的な負荷。** |
+| **FloatType**        | ○         | 高         | 物理シミュレーション等、超高精度が必要な場合用。 |
