@@ -7,7 +7,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 > [!NOTE] Point
 > 特に以下2点はmigration時にコードの修正箇所が多くなりそう。
 - `Clock` から より高機能な `Timer` クラスに置き換わります。
-	- [[#Timerの機能（Clockとの違い）]]
+	- [Timerの機能（Clockとの違い）](#Timerの機能（Clockとの違い）)
 - WebGPU/Nodeベースのポストプロセス管理クラスが`PostProcessing` から `RenderPipeline`に名称変更。
 
 ## New Featured Example Note
@@ -15,6 +15,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 #### 1. [https://threejs.org/examples/#webgl_shaders_ocean](https://t.co/SnmmjUo8El)
 リアルな波の質感を表現し、空の反射や光の屈折をシミュレーションして、美しい水面を描画するシェーダーのデモ。
 r183で「静的な水面＋空」から「HDR＋ブルーム＋雲制御＋時間変化を持つ、より映画的なシーン」へ表現が拡張された。
+
 ::: details details
 - **描画品質/HDRパイプラインの強化**
     - `WebGLRenderer` が `outputBufferType: THREE.HalfFloatType` になり、明るさ情報の表現力が向上。

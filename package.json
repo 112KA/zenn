@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "zenn:init": "zenn init",
-    "new:article": "zenn new:article"
+    "new:article": "zenn new:article",
+    "preview": "zenn preview"
   },
   "keywords": [],
   "author": "",
