@@ -27,6 +27,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 ## Featured Updates
 ### 1. Sky, Water Shader改善 - examples/webgl_shaders_ocean
 - [https://threejs.org/examples/#webgl_shaders_ocean](https://t.co/SnmmjUo8El)
+- [diff](https://112ka.github.io/diff/r183_webgl_shaders_ocean.html)
 - リアルな波の質感を表現し、空の反射や光の屈折をシミュレーションして、美しい水面を描画するシェーダーのデモ。
 - r183で「静的な水面＋空」から「HDR＋ブルーム＋雲制御＋時間変化を持つ、より映画的なシーン」へ表現が拡張された。
 
@@ -68,6 +69,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 ### 3. 改良版SSR Node - examples/webgpu_postprocessing_ssr
 
 - [https://threejs.org/examples/#webgpu_postprocessing_ssr](https://t.co/iyruSamhrx) 
+- [diff](https://112ka.github.io/diff/r183_webgpu_postprocessing_ssr.html)
 - SSR(Screen Space Reflection)を紹介するデモ。
 - 主な改善点は、**SSRの見え方の安定化**と**r183系APIへの追従**。
 
@@ -102,6 +104,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 ### 4. 改良版アニメーションキーフレーム - examples/webgl_animation_keyframes
 
 - [https://threejs.org/examples/#webgl_animation_keyframes](https://t.co/WGAagzP4DU) 
+- [diff](https://112ka.github.io/diff/r183_webgl_animation_keyframes.html)
 - 複数のアニメーションを持つ「Littlest Tokyo」の3Dモデルを読み込み、都市が活気に満ちて動く様子を、軽量な環境ライティングとともに実演するデモ。
 - 主な改善点は以下です。
     - THREE.Timer ベースの更新ループ
@@ -125,6 +128,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 ### 5. 改良版parallax UV - examples/webgpu_parallax_uv
 
 - [https://threejs.org/examples/#webgpu_parallax_uv](https://t.co/yeVDHHSVBG) 
+- [diff](https://112ka.github.io/diff/r183_webgpu_parallax_uv.html)
 - タイルの深みや立体感をシミュレートする「視差（parallax）マッピング」技術を、WebGPUとTSLを用いて、テクスチャのUV座標を視点に応じて動的にオフセットさせることで実演するデモ。
 - `Inspector アドオン活用`や`normalNode + normalMap()を使う形`はr183系の方針に沿った更新
 
@@ -199,6 +203,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 ### 7. 改良版AnaglyphEffect - examples/webgl_effects_anaglyph
 
 - [https://threejs.org/examples/#webgl_effects_anaglyph](https://t.co/FDIuWc0rcP) 
+- [diff](https://112ka.github.io/diff/r183_webgl_effects_anaglyph.html)
 - 赤青メガネを使用して、左右の視覚差から3Dの立体感を生み出す`AnaglyphEffect`のデモ。
 - 改善点は、新しい調整項目（`eyeSep` / `planeDistance`）を活用してステレオ設定を明示的に行っているところ。
     [👉 planeDistanceについて](#anaglypheffect%3A-planedistanceについて)
