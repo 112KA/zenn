@@ -30,7 +30,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 - [diff (r182 → r183)](https://112ka.github.io/diff/r183_webgl_shaders_ocean.html)
 - リアルな波の質感を表現し、空の反射や光の屈折をシミュレーションして、美しい水面を描画するシェーダーのデモ。
 - r183での主な変更は、HDR対応、bloom追加、sky shader改良です。
-  -> つまり、単なる「静的な水面shader＋空」から「より映画的なシーン」へ表現が進化しました。
+  -> 単なる「静的な水面shader＋空」から「より映画的なシーン」へ表現が進化しました。
 
 ::: details details
 - **描画品質/HDRパイプラインの強化**
