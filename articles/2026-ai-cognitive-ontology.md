@@ -123,7 +123,7 @@ patterns:
       - compare
 ```
 
-## 各階層について
+## 各階層についての説明
 ### Stage (3) - 処理の流れ
 Input, Process, Output
 ### Layer (6) - 認知の種類
