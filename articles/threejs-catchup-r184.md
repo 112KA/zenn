@@ -1,9 +1,9 @@
 ---
-title: "Three.js Release Catch-Up - r183"
+title: "Three.js Release Catch-Up - r184"
 emoji: "🗂"
-type: "tech" # tech: 技術記事 / idea: アイデア
+type: "tech"
 topics: ["threejs", "javascript"]
-published: false
+published: true
 ---
 
 ## 概要
@@ -11,13 +11,12 @@ published: false
 公式リリースノート: [Release r184 · mrdoob/three.js · GitHub](https://github.com/mrdoob/three.js/releases/tag/r184)
 Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://github.com/mrdoob/three.js/wiki/Migration-Guide#183--184)
 
-** 所感 **
-:::message
-- 今回のupdateについて、自分の利用範囲では更新対応は必要なさそう
-:::
+**所感**
 
-- gi系の更新が多い印象
-- CanvasTextureどこで使おう。VRのUI的な役割しか思いつかない。。
+- 今回のupdateについて、自分の利用範囲では移行対応は必要なさそう
+- gi系のexample更新が多い印象
+- CanvasTextureが本採用になったら、表現の幅が広がりそう。
+- Inspectorに[Timeline](https://github.com/mrdoob/three.js/pull/33078)と[TSL Graph Addons](https://github.com/mrdoob/three.js/pull/33165)が導入されたぽい
 
 ## examplesベースの更新解説
 
@@ -90,11 +89,10 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 ### 3\. Light Probe Volume (Sponza) - `examples/webgl_lightprobes_sponza.html`
 
 - [https://threejs.org/examples/#webgl_lightprobes_sponza](https://t.co/FPukaQaeJE)
-- [diff (r183 → r184)](https://112ka.github.io/diff/r184_webgl_lightprobes_sponza.html)
-- 有名な「Sponza」の建築モデルを使用し、広範囲な空間に対して\*\*ライトプローブのグリッド（LightProbeGrid）\*\*を配置することで、リアルタイムな間接照明（グローバル・イルミネーション）の効果をシミュレートするデモ。
+- 有名な「Sponza」の建築モデルを使用し、広範囲な空間に対して **ライトプローブのグリッド（LightProbeGrid）** を配置することで、リアルタイムな間接照明（グローバル・イルミネーション）の効果をシミュレートする新規デモ。
 - 新しいアドオン `LightProbeGrid` および `LightProbeGridHelper` の導入。
     \-\> **静的なライトマップに頼らず、実行時にプローブを格子状に自動配置・計算することで、広大な空間内のどこでも一貫した間接照明を享受できるようになった。**
-    [👉 LightProbeGridとは](#lightprobegridとは)
+    [👉 LightProbeGridについて](#lightprobegridについて)
 
 ::: details details
 
@@ -117,8 +115,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 ### 4\. Light Probe Volume - examples/webgl\_lightprobes
 
 - [https://threejs.org/examples/\#webgl\_lightprobes](https://t.co/y5O0BRF6mm)
-- [diff (r183 → r184)](https://112ka.github.io/diff/r184_webgl_lightprobe.html)
-- コーネルボックス内でL1球面調和関数（SH）プロローブのグリッドを使用して、位置依存の間接拡散照明（Global Illumination）をシミュレートするデモ。
+- コーネルボックス内でL1球面調和関数（SH）プローブのグリッドを使用して、位置依存の間接拡散照明（Global Illumination）をシミュレートする新規デモ。
 - 今回の更新で、新しく `LightProbeGrid` と `LightProbeGridHelper` が追加され、シーン全体のGIをベイク・可視化することが可能になりました。
     \-\> 単なる「静的な環境光」から「空間の位置に応じたリアルな色被り（カラーブリーディング）を含むGI表現」が可能になりました。
 
@@ -128,7 +125,8 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 
     - `LightProbeGrid` を使用して、指定した解像度（グリッド数）で空間内のライティング情報をベイク。
     - L1球面調和関数（SH）を用いることで、少ないデータ量で位置に応じた拡散反射光の変化をリアルタイムに計算。
-    - 
+        [👉 球面調和関数（Spherical Harmonics）について](#球面調和関数（spherical-harmonics）について)
+
 - **ベイク・プロセスの追加**
 
     - `probes.bake(renderer, scene, ...)` により、実行時にシーンのライティング情報をサンプリング。
@@ -192,6 +190,7 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 
     - 将来的なブラウザ標準機能である `HTML-in-Canvas API` (WICG) を先取り。
     - 未対応ブラウザ向けに `three-html-render/polyfill` を導入し、広範な互換性を確保。
+        [👉 HTML-in-Canvas APIについて](#html-in-canvas-apiについて)
 
 - **インタラクションの統合**
 
@@ -212,13 +211,16 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 
 この処理を行うことで、ローポリゴンのモデルでも、機械的なカッチリとした見た目を効率的に表現できるようになります。
 
-#### 左（Original Mesh）:
+**左（Original Mesh）:**
+
 急な角度（Sharp Angle）を持つエッジでも、1つの頂点（Shared Vertex）に対して 1つの平均化された法線（Normal） しか持っていません。この状態だと、ライティングが滑らかになりすぎてしまい、角が「溶けた」ような見た目になります。
 
-#### 中央（toCreasedNormals ACTION）:
+**中央（toCreasedNormals ACTION）:**
+
 処理が実行されます。システムが特定の角度（例：45度）を超えるエッジを検出し、共有されていた法線をそれぞれの面に対して分割（Splitting） します。
 
-#### 右（Resulting Mesh）:
+**右（Resulting Mesh）:**
+
 結果です。見た目は1つの頂点ですが、論理的には 分割された頂点（Split Vertices A1, A2） となり、それぞれが独自の 独立した法線（Normal A, B） を持っています。これにより、光の当たり方がエッジでパキッと分かれ、鋭い角（ハードエッジ）が表現されます。
 
 
@@ -229,31 +231,34 @@ Migration-Guide: [Migration Guide · mrdoob/three.js Wiki · GitHub](https://git
 
 以下、主要な手法についてです。
 
-#### 1. AgX Tone Mapping（現代のスタンダード）
+**1. AgX Tone Mapping（現代のスタンダード）**
+
 Blender 4.0以降でデフォルト採用され、Three.jsでも推奨され始めている最新の手法です。
 
 - 特徴: 非常に明るい部分（ハイライト）が、白飛びする前に**「自然に彩度が落ちていく」**フィルムのような挙動をします。デジタル特有の「不自然な色の変化（青が水色に化ける等）」が起きません。
 - 用途: 最高品質のフォトリアルなレンダリング。
 - 印象: 高級感がある、落ち着いている、写実的。
 
-#### 2. ACES Filmic Tone Mapping（映画的・ドラマチック）
+**2. ACES Filmic Tone Mapping（映画的・ドラマチック）**
+
 映画業界の標準（Academy Color Encoding System）に基づいた手法です。
 
 - 特徴: S字カーブが強く、コントラストと彩度がはっきり出ます。暗い部分はより暗く、明るい部分は鮮やかに強調されます。
 - 用途: 映画、ゲーム、没入感重視のコンテンツ。
 - 印象: パキッとしている、カッコいい、ドラマチック。
 
-#### 3. Neutral Tone Mapping（正確・製品重視）
+**3. Neutral Tone Mapping（正確・製品重視）**
+
 Khronos GroupがglTFの表示基準として策定した手法です。
 
 - 特徴: 意図的なコントラスト調整を最小限に抑え、入力されたテクスチャの色味を最大限に尊重します。明るい部分も色相を保ったまま滑らかに処理します。
 - 用途: ECサイト（商品の色確認）、建築ビジュアライゼーション、正確な色再現が必要な場合。
 - 印象: 素直、クリア、誠実。
 
-### LightProbeGridとは？
+### LightProbeGridについて
 
 従来のThree.jsで間接照明を扱う場合、`LightProbe` を手動で配置するか、高価な `PMREM` 等を用いた環境マップに依存していました。
-今回導入された **`LightProbeGrid`** は、指定したバウンディングボックス内を3Dのグリッドで分割し、各格子点で光の情報を球面調和関数（Spherical Harmonics）として保持します。
+今回導入された **`LightProbeGrid`は、定したバウンディングボックス内を3Dのグリッドで分割し、各格子点で光の情報を球面調和関数（Spherical Harmonics）として保持します。
 
 **メリット:**
 
@@ -262,3 +267,37 @@ Khronos GroupがglTFの表示基準として策定した手法です。
 3.  **利便性**: 手動でプローブを並べる手間がなくなり、`bake()` メソッド一つで環境をキャプチャできます。
 
 この進化により、Three.jsにおける「空間のライティング」の質が一段階引き上げられたと言えます。
+
+### 球面調和関数（Spherical Harmonics）について
+3DCGの文脈では、「レンダリング対象の『ある点』に届く全方位からの光（主に間接拡散光）を、少数の数値で近似・表現するもの」
+L0, L1, L2...と次数が高くなるほど、複雑な光の分布を再現できる（精度が上がる）。
+
+**役割:**
+
+- 事前計算（ベイク）: 空間の光情報を、SHという数式に**「翻訳（圧縮）」**して保存。
+- 描画時（レンダリング）: 保存された係数を**「復元（展開）」**し、物体の法線方向と掛け合わせて高速にライティングを算出する。
+
+**参考:**
+
+- [球面調和関数とCG. Part1, ~Light Probeは何を計算しているのか？~](https://blog.siliconstudio.co.jp/2025/07/2781/)
+
+### HTML-in-Canvas APIについて
+
+HTMLコンテンツの描画を2D, 3Dのcanvasで利用するためのAPIです。
+
+:::message
+WICG の提案段階にある実験的な API です。
+現時点では Chrome Canary の chrome://flags/#canvas-draw-element フラグを有効にすることで利用できます。
+:::
+
+**主なユースケース**
+
+- リッチなコンテンツ描画: Canvas内で、チャート（凡例や軸）、クリエイティブツールの装飾テキスト、ゲームメニューなどを、HTML/CSSの表現力そのままに描画する。
+- アクセシビリティの向上: Canvas上の描画内容と代替テキスト（fallback）を自動的に一致させ、スクリーンリーダーなどでの読み上げを正確かつ容易にする。
+- CSSエフェクトとWebGLの融合: HTML要素に対して、WebGLのカスタムシェーダーを用いた高度な視覚エフェクトを適用する。
+- 3D空間内へのHTML表示: 3Dシーン内のオブジェクトの表面（テクスチャ）として、リッチな2Dコンテンツ（HTML要素）をレンダリングする。
+- メディア書き出し: HTMLのコンテンツを、画像や動画として簡単にエクスポート（保存）できるようにする。
+
+**参考:**
+
+- https://github.com/WICG/html-in-canvas
