@@ -1,7 +1,7 @@
 ---
 title: 人の認知機能分類
 emoji: 🍣
-type: ideas
+type: idea
 topics: ["ai"]
 published: false
 ---
